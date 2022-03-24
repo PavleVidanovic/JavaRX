@@ -1,0 +1,61 @@
+package com.example.demo;
+
+import org.junit.jupiter.api.Test;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+
+public class ArtikalServiceTest {
+	
+	@Test
+	public void artikliNaProdaju() 
+	{
+		ArtikalService aService = new ArtikalService();
+		
+		Observable<Artikal> artikalObservable = aService.artikliNaProdaju();
+		
+		  artikalObservable.subscribe ( data -> System.out.println("Data received: " +
+		  data), error -> System.out.println("An error has occured: " + error), () ->
+		  System.out.println("Reactive link completed successfully.") );
+		 
+		
+		Observer observer = new Observer<Artikal>()
+				{
+					Disposable disposable;
+			/*
+			 * public void doUnSubscribe() { disposable.dispose(); }
+			 */
+					
+					@Override
+					public void onSubscribe(@NonNull Disposable d)
+					{
+						disposable = d;
+					}
+					
+					@Override
+					public void onNext(@NonNull Artikal a)
+					{
+						//if (artikal.getIme().startsWith("Krem"))
+							//disposable.dispose();
+						System.out.println("Data received: " + a);
+					}
+					
+					@Override
+					public void onError(@NonNull Throwable e)
+					{
+						System.out.println("Error observer: " + e);
+					}
+					
+					@Override
+					public void onComplete() 
+					{
+						System.out.println("Reactive link completed successfully.");
+					}
+				};
+				
+				//artikalObservable.subscribe(observer);
+				artikalObservable.filter(a -> a.getSkladiste() > 5).subscribe(observer);
+	}
+	
+}
